@@ -73,9 +73,9 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center gap-5 px-8 py-10">
+        <div className="relative z-30 flex flex-col items-center gap-5 px-8 py-10">
           {/* Spinning orb - optimized size */}
-          <div className="relative">
+          <div className="relative z-20">
             <div className="spinning-orb">
               <div className="orb-core"></div>
               <div className="orb-ring ring-1"></div>
@@ -85,8 +85,8 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
           </div>
 
           {/* Typewriter text */}
-          <div className="text-center min-h-[24px]">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 tracking-wide">
+          <div className="text-center min-h-[24px] relative z-30">
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 tracking-wide drop-shadow-lg bg-white/30 dark:bg-slate-900/30 px-3 py-1.5 rounded-lg backdrop-blur-sm">
               {displayText}
               <span className={`inline-block w-0.5 h-4 ml-1 bg-indigo-500 dark:bg-indigo-400 align-middle ${showCursor ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 0.15s ease' }}></span>
             </p>

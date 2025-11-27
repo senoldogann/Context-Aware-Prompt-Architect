@@ -20,10 +20,14 @@ export function getTranslation(
   key: string
 ): string {
   const keys = key.split('.');
-  let value: any = translations;
+  let value: unknown = translations;
   
   for (const k of keys) {
-    value = value?.[k];
+    if (typeof value === 'object' && value !== null && k in value) {
+      value = (value as Record<string, unknown>)[k];
+    } else {
+      return key;
+    }
     if (value === undefined) return key;
   }
   

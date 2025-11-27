@@ -84,13 +84,19 @@ const extensionToLanguage: Record<string, string> = {
   '.svelte': 'Svelte',
 };
 
+interface FileNode {
+  type: 'file' | 'directory';
+  name: string;
+  children?: FileNode[];
+}
+
 /**
  * Dosya yapısından dilleri tespit eder
  */
-function detectLanguagesFromStructure(structure: any): Set<string> {
+function detectLanguagesFromStructure(structure: unknown): Set<string> {
   const detectedLanguages = new Set<string>();
   
-  function traverse(node: any) {
+  function traverse(node: FileNode) {
     if (node.type === 'file') {
       const ext = node.name.substring(node.name.lastIndexOf('.'));
       const language = extensionToLanguage[ext];
@@ -103,7 +109,11 @@ function detectLanguagesFromStructure(structure: any): Set<string> {
   }
   
   if (Array.isArray(structure)) {
-    structure.forEach(traverse);
+    structure.forEach((node) => {
+      if (node && typeof node === 'object' && 'type' in node) {
+        traverse(node as FileNode);
+      }
+    });
   }
   
   return detectedLanguages;
@@ -112,7 +122,7 @@ function detectLanguagesFromStructure(structure: any): Set<string> {
 /**
  * Config dosyalarından dilleri tespit eder
  */
-function detectLanguagesFromConfig(configFiles: Record<string, any>): Set<string> {
+function detectLanguagesFromConfig(configFiles: Record<string, unknown>): Set<string> {
   const detectedLanguages = new Set<string>();
   
   // package.json
@@ -192,8 +202,8 @@ function detectLanguagesFromConfig(configFiles: Record<string, any>): Set<string
  * Ana dil tespit fonksiyonu
  */
 export function detectLanguages(
-  structure: any,
-  configFiles: Record<string, any>
+  structure: unknown,
+  configFiles: Record<string, unknown>
 ): DetectedLanguage[] {
   const languages = new Set<string>();
   
