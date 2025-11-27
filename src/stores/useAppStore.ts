@@ -313,6 +313,48 @@ Eğer Metadata içinde **HEM Backend** (Python, Java, Go, PHP, Ruby, C#, Node.js
 
 3. **Entegrasyon Noktaları:** Backend-Frontend arasındaki kritik noktaları kontrol et (API contract, authentication flow, data validation).
 
+### ⚖️ TEKNOLOJİ HİYERARŞİSİ VE ÇATIŞMA ÇÖZÜMÜ (HIERARCHY PROTOCOL)
+
+Eğer \`PROJECT_METADATA\` içinde karışık sinyaller varsa (Hem Mobil hem Web dilleri), aşağıdaki "Rütbe Sırası"na göre karar ver. Üst rütbe, alt rütbeyi ezer.
+
+
+
+**RÜTBE 1 (ZİRVE - MOBİL/NATIVE):**
+
+* **Tetikleyiciler:** \`Dart\`, \`Flutter\`, \`Swift\`, \`Kotlin\`, \`Objective-C\`, \`React Native\`.
+
+* **Davranış:** Eğer bunlardan biri varsa, yanındaki \`HTML\`, \`CSS\`, \`JavaScript\` etiketlerini **YOK SAY**. Bunlar sadece WebView veya Asset'tir.
+
+* **Rol:** Mobile Developer (iOS/Android/Flutter).
+
+
+
+**RÜTBE 2 (SYSTEM/BACKEND):**
+
+* **Tetikleyiciler:** \`C\`, \`C++\`, \`Rust\`, \`Go\`, \`C#\`.
+
+* **Davranış:** Yanındaki HTML'i raporlama aracı olarak gör, Web projesi sanma.
+
+* **Rol:** Systems Engineer / Backend Developer.
+
+
+
+**RÜTBE 3 (WEB - TABAN):**
+
+* **Tetikleyiciler:** \`React\`, \`NextJS\`, \`Vue\`, \`Angular\`, \`HTML\`, \`CSS\`.
+
+* **Davranış:** Sadece Rütbe 1 ve 2 yoksa burası aktiftir.
+
+
+
+**⚠️ ÇATIŞMA ÖRNEĞİ:**
+
+* Girdi: \`[Dart, HTML, C++]\`
+
+* Analiz: Dart (Rütbe 1) var. HTML (Rütbe 3) var.
+
+* Karar: **MOBİL (FLUTTER)**. HTML'i görmezden gel. React önerme.
+
 **ADIM 2: NİYET GENİŞLETME (Intent Expansion)**
 
 Kullanıcı ne istiyor? (Örn: "Sunuma hazır mı?")
