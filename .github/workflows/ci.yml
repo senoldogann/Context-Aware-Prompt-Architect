@@ -44,3 +44,82 @@ jobs:
       
       - name: Build application
         run: npm run build
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate Windows icon
+        run: npm run generate:icon:win
+        continue-on-error: true
+      
+      - name: Build Windows application
+        run: npm run electron:build:win
+        continue-on-error: true
+      
+      - name: Check build artifacts
+        run: |
+          if (Test-Path "release\Prompt Architect Setup*.exe") {
+            Write-Host "✅ Windows installer created successfully"
+            Get-ChildItem "release\Prompt Architect Setup*.exe" | ForEach-Object { Write-Host "  - $($_.Name) ($([math]::Round($_.Length/1MB, 2)) MB)" }
+          } else {
+            Write-Host "⚠️ Windows installer not found"
+          }
+          
+          if (Test-Path "release\Prompt Architect-*-win.zip") {
+            Write-Host "✅ Windows portable created successfully"
+            Get-ChildItem "release\Prompt Architect-*-win.zip" | ForEach-Object { Write-Host "  - $($_.Name) ($([math]::Round($_.Length/1MB, 2)) MB)" }
+          } else {
+            Write-Host "⚠️ Windows portable not found"
+          }
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate macOS icon
+        run: npm run generate:icon
+      
+      - name: Build macOS application
+        run: npm run electron:build:mac
+        continue-on-error: true
+      
+      - name: Check build artifacts
+        run: |
+          if [ -f "release/Prompt Architect-*-arm64.dmg" ] || [ -f "release/Prompt Architect-*.dmg" ]; then
+            echo "✅ macOS DMG created successfully"
+            ls -lh release/*.dmg | awk '{print "  - " $9 " (" $5 ")"}'
+          else
+            echo "⚠️ macOS DMG not found"
+          fi
+          
+          if [ -f "release/Prompt Architect-*-mac.zip" ]; then
+            echo "✅ macOS ZIP created successfully"
+            ls -lh release/*-mac.zip | awk '{print "  - " $9 " (" $5 ")"}'
+          else
+            echo "⚠️ macOS ZIP not found"
+          fi

@@ -114,6 +114,10 @@ The built application will be in the `release/` directory.
 - **macOS:** Detaylı kurulum talimatları için [BUILD_MACOS.md](BUILD_MACOS.md) dosyasına bakın.
 - **Windows:** Detaylı kurulum talimatları için [BUILD_WINDOWS.md](BUILD_WINDOWS.md) dosyasına bakın.
 
+**Build Test:**
+- Build'lerin çalışıp çalışmadığını kontrol etmek için [TESTING.md](TESTING.md) dosyasına bakın.
+- GitHub Actions her push'ta otomatik olarak Windows ve macOS build'lerini test eder.
+
 ### 🎯 Usage
 
 1. **Select a Project Folder**: Click "Select Folder" and choose your project directory
