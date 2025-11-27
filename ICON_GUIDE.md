@@ -20,9 +20,14 @@ Uygulama için profesyonel bir logo tasarlandı:
 - **Format**: ICNS (macOS native icon format)
 - **Kullanım**: Electron Builder tarafından otomatik kullanılır
 
+### Windows Icon (.ico)
+- **Konum**: `build/icon.ico`
+- **Format**: ICO (Windows native icon format)
+- **Kullanım**: Electron Builder tarafından otomatik kullanılır
+
 ## 🛠️ Icon Oluşturma
 
-### Otomatik Yöntem (Önerilen)
+### macOS Icon Oluşturma
 
 ```bash
 npm run generate:icon
@@ -32,6 +37,17 @@ Bu komut:
 1. SVG'yi PNG formatlarına dönüştürür (tüm gerekli boyutlar)
 2. macOS ICNS dosyası oluşturur
 3. `build/icon.icns` dosyasını hazırlar
+
+### Windows Icon Oluşturma
+
+```bash
+npm run generate:icon:win
+```
+
+Bu komut:
+1. SVG'yi PNG formatlarına dönüştürür (16x16, 32x32, 48x48, 64x64, 128x128, 256x256)
+2. Windows ICO dosyası oluşturur
+3. `build/icon.ico` dosyasını hazırlar
 
 ### Gereksinimler
 

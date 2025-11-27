@@ -93,6 +93,16 @@ veya sadece DMG dosyası için:
 npm run electron:build:mac:dmg
 ```
 
+#### Windows için Build
+```bash
+npm run electron:build:win
+```
+
+veya sadece NSIS installer için:
+```bash
+npm run electron:build:win:nsis
+```
+
 #### Tüm Platformlar için Build
 ```bash
 npm run electron:build
@@ -100,7 +110,9 @@ npm run electron:build
 
 The built application will be in the `release/` directory.
 
-**macOS Kurulum:** Detaylı kurulum talimatları için [BUILD_MACOS.md](BUILD_MACOS.md) dosyasına bakın.
+**Kurulum Rehberleri:**
+- **macOS:** Detaylı kurulum talimatları için [BUILD_MACOS.md](BUILD_MACOS.md) dosyasına bakın.
+- **Windows:** Detaylı kurulum talimatları için [BUILD_WINDOWS.md](BUILD_WINDOWS.md) dosyasına bakın.
 
 ### 🎯 Usage
 

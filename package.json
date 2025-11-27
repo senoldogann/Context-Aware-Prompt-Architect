@@ -12,9 +12,12 @@
     "copy:electron": "mkdir -p dist-electron && cp electron/main.cjs dist-electron/main.cjs && cp electron/preload.cjs dist-electron/preload.cjs",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && npm run copy:electron && sleep 1 && electron .\"",
     "generate:icon": "./scripts/generate-icon.sh",
+    "generate:icon:win": "./scripts/generate-windows-icon.sh",
     "electron:build": "vite build && npm run copy:electron && electron-builder",
     "electron:build:mac": "vite build && npm run copy:electron && electron-builder --mac",
     "electron:build:mac:dmg": "vite build && npm run copy:electron && electron-builder --mac dmg",
+    "electron:build:win": "vite build && npm run copy:electron && electron-builder --win",
+    "electron:build:win:nsis": "vite build && npm run copy:electron && electron-builder --win nsis",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [
@@ -98,7 +101,18 @@
       "identity": null
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "Senol Dogan"
     },
     "linux": {
       "target": "AppImage"

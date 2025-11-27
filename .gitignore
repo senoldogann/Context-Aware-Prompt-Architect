@@ -36,7 +36,7 @@ release
 # Icon generation
 build/icon.iconset/
 build/icon.png
-# Note: build/icon.icns should be committed (it's the final icon file)
+# Note: build/icon.icns and build/icon.ico should be committed (they're the final icon files)
 
 # macOS
 .DS_Store
