@@ -5,6 +5,8 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  # Build jobs only run on tags/releases to save CI minutes
+  workflow_dispatch: # Manual trigger
 
 jobs:
   lint:
@@ -48,6 +50,8 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
+    # Only run on tags, releases, or manual trigger to save CI minutes
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     
     steps:
       - uses: actions/checkout@v4
@@ -65,8 +69,8 @@ jobs:
         run: npm run generate:icon:win
         continue-on-error: true
       
-      - name: Build Windows application
-        run: npm run electron:build:win
+      - name: Build Windows application (NSIS only to avoid GH_TOKEN error)
+        run: npm run electron:build:win:nsis
         continue-on-error: true
       
       - name: Check build artifacts
@@ -78,16 +82,14 @@ jobs:
             Write-Host "⚠️ Windows installer not found"
           }
           
-          if (Test-Path "release\Prompt Architect-*-win.zip") {
-            Write-Host "✅ Windows portable created successfully"
-            Get-ChildItem "release\Prompt Architect-*-win.zip" | ForEach-Object { Write-Host "  - $($_.Name) ($([math]::Round($_.Length/1MB, 2)) MB)" }
-          } else {
-            Write-Host "⚠️ Windows portable not found"
-          }
+          # Portable build requires GH_TOKEN, skip in CI
+          Write-Host "ℹ️ Portable build skipped in CI (requires GH_TOKEN for publishing)"
 
   build-macos:
     name: Build macOS
     runs-on: macos-latest
+    # Only run on tags, releases, or manual trigger to save CI minutes
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     
     steps:
       - uses: actions/checkout@v4

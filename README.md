@@ -26,12 +26,14 @@ Powered by local Ollama models
 - 🎯 **Context-Aware Prompt Refinement**: Analyzes your project structure and tech stack to create optimized prompts
 - 🤖 **Local AI Models**: Works entirely with local Ollama models - no data leaves your machine
 - 📁 **Project Analysis**: Automatically detects tech stack, config files, and project structure
-- 🌍 **Multi-Language Support**: Full UI support for English, Turkish, German, and Finnish
+- 🌍 **Multi-Language UI Support**: Full UI support for English, Turkish, German, and Finnish
 - 🎨 **Modern UI**: Clean, professional interface with dark/light theme support
 - ⚡ **Fast & Efficient**: Built with Electron, React, and Vite for optimal performance
 - 🔒 **Privacy First**: All processing happens locally - your code never leaves your computer
 - 📚 **Prompt History**: View and reload previous prompts with full history management
 - 🛑 **Generation Control**: Stop ongoing AI generation at any time
+- 💻 **Cross-Platform**: Supports macOS (Intel & Apple Silicon) and Windows (x64 & ia32)
+- 🎨 **Professional Logo**: Custom-designed logo with modern gradient aesthetics
 
 ### 🚀 Quick Start
 
@@ -116,7 +118,7 @@ The built application will be in the `release/` directory.
 
 **Build Test:**
 - Build'lerin çalışıp çalışmadığını kontrol etmek için [TESTING.md](TESTING.md) dosyasına bakın.
-- GitHub Actions her push'ta otomatik olarak Windows ve macOS build'lerini test eder.
+- GitHub Actions otomatik olarak Windows ve macOS build'lerini test eder (tag/release oluşturulduğunda).
 
 ### 🎯 Usage
 
@@ -167,13 +169,24 @@ ollamaBaseURL: 'http://your-ollama-url:11434'
 - **TailwindCSS**: Styling
 - **Zustand**: State management
 - **Axios**: HTTP client for Ollama API
+- **i18n**: Custom internationalization system
+
+#### Supported Platforms
+
+- ✅ **macOS**: 10.15+ (Intel x64 & Apple Silicon arm64)
+- ✅ **Windows**: 10+ (x64 & ia32)
+- ✅ **Linux**: AppImage (future support)
 
 #### Scripts
 
 - `npm run dev`: Start Vite dev server
 - `npm run electron:dev`: Start Electron in development mode
 - `npm run build`: Build React app
-- `npm run electron:build`: Build Electron app for production
+- `npm run electron:build`: Build Electron app for all platforms
+- `npm run electron:build:mac`: Build for macOS only
+- `npm run electron:build:win`: Build for Windows only
+- `npm run generate:icon`: Generate macOS icon
+- `npm run generate:icon:win`: Generate Windows icon
 - `npm run lint`: Run ESLint
 
 ### 🤝 Contributing

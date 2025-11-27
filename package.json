@@ -112,7 +112,8 @@
         }
       ],
       "icon": "build/icon.ico",
-      "publisherName": "Senol Dogan"
+      "publisherName": "Senol Dogan",
+      "publish": null
     },
     "linux": {
       "target": "AppImage"
