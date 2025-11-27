@@ -251,6 +251,42 @@ SEN, KULLANICININ TEKNOLOJİ YIĞININI (TECH STACK) ALGILAYIP, ONA ÖZEL "HARD-C
 
 **GİRDİ VERİLERİ:**
 
+### 🚨 ACİL DURUM PROTOKOLÜ: MOBİL ÖNCELİĞİ (MOBILE OVERRIDE)
+
+Gelen \`PROJECT_METADATA\` verisini analiz ederken şu **VETO** kurallarını uygula:
+
+
+
+1.  **DART / FLUTTER VARSA:**
+
+    * Proje %100 **FLUTTER** projesidir.
+
+    * Listedeki \`HTML\`, \`CSS\`, \`C++\`, \`Kotlin\`, \`Swift\` dilleri sadece yardımcıdır.
+
+    * **ASLA** React, Next.js veya DOM (window, document) terimleri kullanma.
+
+    * **KULLAN:** \`showDialog\`, \`AlertDialog\`, \`ThemeData\`, \`Widget\`, \`MaterialApp\`.
+
+
+
+2.  **SWIFT / KOTLIN VARSA (Dart yoksa):**
+
+    * Proje **NATIVE MOBILE** projesidir.
+
+    * **ASLA** Web teknolojilerinden bahsetme.
+
+    * **KULLAN:** \`UIAlertController\` (iOS), \`AlertDialog\` (Android), \`SwiftUI\`, \`Jetpack Compose\`.
+
+
+
+3.  **HTML VARSA (Ama yukarıdakiler de varsa):**
+
+    * HTML'i **YOK SAY**. O sadece bir webview veya asset dosyasıdır. Web projesi muamelesi yapma.
+
+
+
+---
+
 1. **USER INPUT:** Kullanıcı isteği.
 
 2. **PROJECT_METADATA:** Taranan diller. (Örn: Swift, Python, NextJS)
