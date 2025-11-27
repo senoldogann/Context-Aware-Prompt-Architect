@@ -190,6 +190,7 @@ export class OllamaService {
 
   /**
    * Stream modunda prompt'u gönderir (real-time yanıt için)
+   * Browser'da fetch API kullanarak gerçek stream desteği
    */
   async *generateStream(
     model: string,
@@ -216,74 +217,98 @@ export class OllamaService {
         console.log('Ollama stream request:', { model, promptLength: prompt.length });
       }
 
-      const response = await this.client.post(
-        '/api/generate',
-        request,
-        {
-          responseType: 'stream',
-          timeout: 300000,
-          signal: abortSignal, // Abort signal desteği
-        }
-      );
+      // Browser'da fetch API kullan (gerçek stream desteği)
+      const response = await fetch(`${this.baseURL}/api/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+        signal: abortSignal,
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) {
+        throw new Error('Response body is null');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
       let buffer = '';
-      
-      for await (const chunk of response.data) {
-        // Abort kontrolü
-        if (abortSignal?.aborted) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Stream aborted by user');
-          }
-          return;
-        }
 
-        buffer += chunk.toString();
-        const lines = buffer.split('\n');
-        // Son satırı buffer'da tut (tam olmayabilir)
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          
+      try {
+        while (true) {
           // Abort kontrolü
           if (abortSignal?.aborted) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Stream aborted by user');
+            }
+            reader.cancel();
             return;
           }
 
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          // Chunk'u decode et ve buffer'a ekle
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          // Son satırı buffer'da tut (tam olmayabilir)
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
+
+            // Abort kontrolü
+            if (abortSignal?.aborted) {
+              reader.cancel();
+              return;
+            }
+
+            try {
+              const data = JSON.parse(line);
+              if (data.response) {
+                yield data.response;
+              }
+              if (data.done) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('Stream completed');
+                }
+                reader.cancel();
+                return;
+              }
+            } catch (parseError) {
+              // JSON parse hatası, devam et
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('Failed to parse stream chunk:', line);
+              }
+            }
+          }
+        }
+
+        // Kalan buffer'ı işle
+        if (buffer.trim() && !abortSignal?.aborted) {
           try {
-            const data = JSON.parse(line);
+            const data = JSON.parse(buffer);
             if (data.response) {
               yield data.response;
             }
-            if (data.done) {
-              if (process.env.NODE_ENV === 'development') {
-                console.log('Stream completed');
-              }
-              return;
-            }
-          } catch (parseError) {
-            // JSON parse hatası, devam et
-            if (process.env.NODE_ENV === 'development') {
-              console.warn('Failed to parse stream chunk:', line);
-            }
+          } catch {
+            // Ignore parse errors
           }
         }
-      }
-
-      // Kalan buffer'ı işle
-      if (buffer.trim() && !abortSignal?.aborted) {
-        try {
-          const data = JSON.parse(buffer);
-          if (data.response) {
-            yield data.response;
-          }
-        } catch {
-          // Ignore parse errors
-        }
+      } finally {
+        reader.releaseLock();
       }
     } catch (error) {
       // Abort hatası normal bir durum, sessizce handle et
-      if (axios.isAxiosError(error) && error.code === 'ERR_CANCELED') {
+      if (error instanceof Error && error.name === 'AbortError') {
         if (process.env.NODE_ENV === 'development') {
           console.log('Stream canceled by user');
         }
@@ -293,12 +318,12 @@ export class OllamaService {
       if (process.env.NODE_ENV === 'development') {
         console.error('Ollama stream error:', error);
       }
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        if (axiosError.code === 'ECONNREFUSED' || axiosError.code === 'ERR_NETWORK') {
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
           throw new Error('Ollama servisine bağlanılamıyor.');
         }
-        if (axiosError.code === 'ECONNABORTED' || axiosError.message.includes('timeout')) {
+        if (error.message.includes('timeout')) {
           throw new Error('Stream zaman aşımına uğradı.');
         }
       }

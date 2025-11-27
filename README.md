@@ -66,17 +66,41 @@ npm run electron:dev
 
 ### 📦 Building for Production
 
+#### Icon Oluşturma (macOS)
+
+Uygulama için logo/icon oluşturmak için:
+
+```bash
+npm run generate:icon
+```
+
+Detaylı bilgi için [ICON_GUIDE.md](ICON_GUIDE.md) dosyasına bakın.
+
 #### Development Build
 ```bash
 npm run electron:dev
 ```
 
 #### Production Build
+
+#### macOS için Build
+```bash
+npm run electron:build:mac
+```
+
+veya sadece DMG dosyası için:
+```bash
+npm run electron:build:mac:dmg
+```
+
+#### Tüm Platformlar için Build
 ```bash
 npm run electron:build
 ```
 
 The built application will be in the `release/` directory.
+
+**macOS Kurulum:** Detaylı kurulum talimatları için [BUILD_MACOS.md](BUILD_MACOS.md) dosyasına bakın.
 
 ### 🎯 Usage
 

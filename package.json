@@ -11,7 +11,10 @@
     "preview": "vite preview",
     "copy:electron": "mkdir -p dist-electron && cp electron/main.cjs dist-electron/main.cjs && cp electron/preload.cjs dist-electron/preload.cjs",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && npm run copy:electron && sleep 1 && electron .\"",
+    "generate:icon": "./scripts/generate-icon.sh",
     "electron:build": "vite build && npm run copy:electron && electron-builder",
+    "electron:build:mac": "vite build && npm run copy:electron && electron-builder --mac",
+    "electron:build:mac:dmg": "vite build && npm run copy:electron && electron-builder --mac dmg",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [
@@ -78,7 +81,22 @@
       "package.json"
     ],
     "mac": {
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "win": {
       "target": "nsis"

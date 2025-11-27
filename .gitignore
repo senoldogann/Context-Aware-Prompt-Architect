@@ -33,6 +33,11 @@ release
 # Build outputs
 *.tsbuildinfo
 
+# Icon generation
+build/icon.iconset/
+build/icon.png
+# Note: build/icon.icns should be committed (it's the final icon file)
+
 # macOS
 .DS_Store
 .AppleDouble

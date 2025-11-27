@@ -1,0 +1,72 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)" opacity="0.95"/>
+  
+  <!-- Inner Glow Circle -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+  
+  <!-- Main Symbol: Stylized "P" for Prompt -->
+  <g transform="translate(256, 256)">
+    <!-- P Shape - Left vertical line -->
+    <rect x="-80" y="-120" width="24" height="240" rx="12" fill="white" opacity="0.95"/>
+    
+    <!-- P Shape - Top horizontal -->
+    <rect x="-80" y="-120" width="140" height="24" rx="12" fill="white" opacity="0.95"/>
+    
+    <!-- P Shape - Middle horizontal -->
+    <rect x="-80" y="-20" width="140" height="24" rx="12" fill="white" opacity="0.95"/>
+    
+    <!-- P Shape - Curved top right -->
+    <path d="M 60 -120 Q 100 -120 100 -80 Q 100 -40 60 -40" 
+          stroke="white" 
+          stroke-width="24" 
+          fill="none" 
+          stroke-linecap="round"
+          opacity="0.95"/>
+    
+    <!-- AI Sparkle/Star Elements -->
+    <g transform="translate(120, -80)">
+      <path d="M 0 -20 L 4 -4 L 20 0 L 4 4 L 0 20 L -4 4 L -20 0 L -4 -4 Z" 
+            fill="url(#grad2)" 
+            opacity="0.9"
+            filter="url(#glow)"/>
+    </g>
+    
+    <g transform="translate(140, 60)">
+      <path d="M 0 -15 L 3 -3 L 15 0 L 3 3 L 0 15 L -3 3 L -15 0 L -3 -3 Z" 
+            fill="url(#grad2)" 
+            opacity="0.8"
+            filter="url(#glow)"/>
+    </g>
+    
+    <g transform="translate(-140, -60)">
+      <path d="M 0 -12 L 2.5 -2.5 L 12 0 L 2.5 2.5 L 0 12 L -2.5 2.5 L -12 0 L -2.5 -2.5 Z" 
+            fill="url(#grad2)" 
+            opacity="0.7"
+            filter="url(#glow)"/>
+    </g>
+  </g>
+  
+  <!-- Outer Ring with Tech Pattern -->
+  <circle cx="256" cy="256" r="230" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="8,4"/>
+</svg>
+

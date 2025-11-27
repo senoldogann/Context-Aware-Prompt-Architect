@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
 
 interface TypewriterEffectProps {
@@ -6,41 +6,81 @@ interface TypewriterEffectProps {
 }
 
 export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const charIndexRef = useRef(0);
 
-  const messages = useMemo(() => [
-    t('typewriter.analyzing') || '🧠 Analyzing project context...',
-    t('typewriter.optimizing') || '⚡ Optimizing prompt structure...',
-    t('typewriter.crafting') || '🎯 Crafting perfect instructions...',
-    t('typewriter.adding') || '✨ Adding technical details...',
-    t('typewriter.finalizing') || '🚀 Finalizing AI-ready prompt...',
-  ], [t]);
+  const messages = useMemo(() => {
+    const getMessage = (key: string, fallback: string): string => {
+      const translation = t(key);
+      // Eğer çeviri bulunamazsa (key ile aynıysa veya boşsa), fallback kullan
+      if (!translation || translation === key || translation.trim() === '') {
+        return fallback;
+      }
+      return translation;
+    };
+
+    const msgs = [
+      getMessage('typewriter.analyzing', '🧠 Analyzing project context...'),
+      getMessage('typewriter.optimizing', '⚡ Optimizing prompt structure...'),
+      getMessage('typewriter.crafting', '🎯 Crafting perfect instructions...'),
+      getMessage('typewriter.adding', '✨ Adding technical details...'),
+      getMessage('typewriter.finalizing', '🚀 Finalizing AI-ready prompt...'),
+    ];
+    // Eğer hiç mesaj yoksa, fallback mesajları kullan
+    if (msgs.length === 0) {
+      return [
+        '🧠 Analyzing project context...',
+        '⚡ Optimizing prompt structure...',
+        '🎯 Crafting perfect instructions...',
+        '✨ Adding technical details...',
+        '🚀 Finalizing AI-ready prompt...',
+      ];
+    }
+    return msgs;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
 
   useEffect(() => {
     if (!isActive) {
       setDisplayText('');
       setCurrentMessageIndex(0);
+      charIndexRef.current = 0;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
       return;
     }
 
-    let timeoutId: NodeJS.Timeout;
-    let charIndex = 0;
+    if (messages.length === 0) {
+      setDisplayText('Loading...');
+      return;
+    }
+
     const currentMessage = messages[currentMessageIndex];
+    if (!currentMessage) {
+      setDisplayText('Loading...');
+      return;
+    }
+
+    charIndexRef.current = 0;
+    setDisplayText('');
 
     const typeNextChar = () => {
-      if (charIndex < currentMessage.length) {
-        setDisplayText(currentMessage.slice(0, charIndex + 1));
-        charIndex++;
-        timeoutId = setTimeout(typeNextChar, 60);
+      if (charIndexRef.current < currentMessage.length) {
+        setDisplayText(currentMessage.slice(0, charIndexRef.current + 1));
+        charIndexRef.current++;
+        timeoutRef.current = setTimeout(typeNextChar, 60);
       } else {
         // Wait before switching to next message
         setTimeout(() => {
           setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
           setDisplayText('');
-          charIndex = 0;
+          charIndexRef.current = 0;
         }, 1500);
       }
     };
@@ -53,7 +93,10 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
     }, 530);
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
       clearInterval(cursorInterval);
     };
   }, [isActive, currentMessageIndex, messages]);
@@ -62,7 +105,7 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-      <div className="relative w-full h-full flex items-center justify-center bg-white/40 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl">
+      <div className="relative w-full h-full flex items-center justify-center bg-white/50 dark:bg-slate-900/70 backdrop-blur-md rounded-xl">
         {/* Subtle animated background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/10 dark:via-purple-500/10 dark:to-pink-500/10 rounded-xl animate-gradient-shift"></div>
         
@@ -73,9 +116,9 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
         </div>
 
         {/* Content */}
-        <div className="relative z-30 flex flex-col items-center gap-5 px-8 py-10">
+        <div className="relative z-40 flex flex-col items-center gap-5 px-8 py-10">
           {/* Spinning orb - optimized size */}
-          <div className="relative z-20">
+          <div className="relative z-30">
             <div className="spinning-orb">
               <div className="orb-core"></div>
               <div className="orb-ring ring-1"></div>
@@ -84,11 +127,14 @@ export const TypewriterEffect = ({ isActive }: TypewriterEffectProps) => {
             </div>
           </div>
 
-          {/* Typewriter text */}
-          <div className="text-center min-h-[24px] relative z-30">
-            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 tracking-wide drop-shadow-lg bg-white/30 dark:bg-slate-900/30 px-3 py-1.5 rounded-lg backdrop-blur-sm">
-              {displayText}
-              <span className={`inline-block w-0.5 h-4 ml-1 bg-indigo-500 dark:bg-indigo-400 align-middle ${showCursor ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 0.15s ease' }}></span>
+          {/* Typewriter text - Maximum visibility */}
+          <div className="text-center min-h-[32px] relative z-[100]">
+            <p className="text-base font-bold text-slate-900 dark:text-white tracking-wide drop-shadow-lg">
+              {displayText || messages[currentMessageIndex] || 'Processing...'}
+              <span 
+                className={`inline-block w-0.5 h-5 ml-1.5 bg-indigo-600 dark:bg-indigo-400 align-middle ${showCursor ? 'opacity-100' : 'opacity-0'}`}
+                style={{ transition: 'opacity 0.15s ease' }}
+              ></span>
             </p>
           </div>
 
